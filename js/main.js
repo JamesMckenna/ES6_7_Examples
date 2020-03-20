@@ -146,4 +146,25 @@ Promise.all([promiseChaining4, promiseChaining5, promiseChaining6])
         console.log(err);
         console.log('');
     });
-  
+
+
+/* The fetch API in the browser is a practical example */
+/* notice how .json() also returns a promise */
+fetch('http://api.icndb.com/jokes/random/5')
+    .then((res) => {
+        res.json().then((data) => {
+            console.log(data);
+        });
+    }).catch((err) => {
+        console.log(err);
+    });
+
+
+fetch('http://badURLtocatchError')
+    .then((res) => {
+        res.json().then((data) => {
+            console.log(data);
+        });
+    }).catch((err) => {
+        console.log(err);
+    });
