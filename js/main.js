@@ -154,10 +154,22 @@ fetch('http://api.icndb.com/jokes/random/5')
     .then((res) => {
         res.json().then((data) => {
             console.log(data);
+            const body = document.getElementsByTagName('body')[0];
+            const h3 = document.createElement('h3');
+            h3.innerHTML = 'The Internet Chuck Norris Database Jokes:';
+            body.append(h3);
+            let jokes = data.value;
+            jokes.forEach((joke) => {
+                const pTag = document.createElement('p');
+                pTag.innerHTML = `<p><span>Joke ID: ${joke.id},</span>   Joke: ${joke.joke}</p>`;
+                body.append(pTag);
+            });
         });
     }).catch((err) => {
         console.log(err);
     });
+
+
 
 
 fetch('http://badURLtocatchError')
@@ -166,5 +178,33 @@ fetch('http://badURLtocatchError')
             console.log(data);
         });
     }).catch((err) => {
+        console.log('Show fetch API catching error from badURL');
         console.log(err);
     });
+
+
+
+/* A couple more exmaples */
+
+const posts = [
+    { title: 'Post One', body: 'Body of post 1' },
+    { title: 'Post Two', body: 'Body of post 2' },
+    { title: 'Post Three', body: 'Body of post 3' }
+];
+
+function getPosts() {
+    setTimeout(() => {
+        const body = document.getElementsByTagName('body')[0];
+        const h3 = document.createElement('h3');
+        h3.innerHTML = 'Posts Example:';
+        body.append(h3);
+        posts.forEach((post, index) => {
+            const pTag = document.createElement('p');
+            pTag.innerHTML = `<p><span>Array Index: ${index}, </span>Post Title: ${post.title},  <span>   Post Body: ${post.body}</span></p>`;
+            body.append(pTag);
+        });
+    }, 2000);
+}
+
+getPosts();
+
