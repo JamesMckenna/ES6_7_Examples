@@ -1,5 +1,9 @@
 'use strict'
 
+//A Promise is a way to chain functions and have then execute one after another
+//The function chain, can use the previoulsy value returned from a prior function in the chain or not.
+//The function chain should end with a .catch to handle errors, 
+//though there are other function in the Promise prototype that the chain can end with
 
 /* Basic Promise */
 let myPromise = new Promise((resolve, reject) => {
@@ -8,148 +12,202 @@ let myPromise = new Promise((resolve, reject) => {
     reject('rejected myPromise');
 });
 
-/* One way to handle it */
+//Execute the function chain
 myPromise.then((res) => {
     console.log(res);
     console.log('');
-}, (err) => {
-        console.log(err);
-        console.log('');
-});
-
-/* Second way to handle it */
-//myPromise.then((res) => {
-//    console.log(res);
-//}).catch((err) => {
-//    console.log(err);
-//});
-
-
-
-
-
-
-/***** Example 2 Promise chaining *****/ 
-
-let promiseChaining = new Promise((resolve, reject) => {
-    resolve('resolve promiseChaining called');
-    reject('rejected promiseChaining');
-
-});
-
-let promiseChaining2 = new Promise((resolve, reject) => {
-    //resolve('resolve promiseChaining2 called');
-    reject('rejected promiseChaining2');
-
-});
-
-let promiseChaining3 = new Promise((resolve, reject) => {
-    resolve('resolve promiseChaining3 called');
-    reject('rejected promiseChaining3 all promises following this one are not executed');
-
+}).catch((err) => {
+    console.error(err);
+    console.log('');
 });
 
 
-/* A Promisse chain NEEDS to be declared Promise.all([]) */
-//Promise.all([promiseChaining, promiseChaining2, promiseChaining2])
-//    .then((data) => {
-//        console.log(data);
-//    }).catch((err) => {
-//        console.log('Example 2 Promising Chaining');
-//        console.log('catching first error that happens in a promise chain');
-//        console.log('notice how if there is an error in the promise chain, none of the previous resolves return');
-//        console.log('uncomment resolve in a prmoise, and comment out a resolve in a later promise to demonstrate');
-//        console.log(err);
-//    });
 
 
-/* Looks like a promise chain can be assigned to a variable. ATM I can't think of why I would use a varible in to declare a promise chain
- * something to think on
+/****************** START Example of using/making Promise object from a normal function  *******************/
+
+//If function has good result this is the response callback
+function res(successResult) {
+    //This is not a Promise object, just a regular function
+    console.log('The callback function after a succeful promise is run');
+    console.log(successResult);
+    console.log('');
+}
+//If function has a bad result this is the reject callback
+function rej(failResult) {
+    //This is not a Promise object, just a regular function
+    console.log('The callback to handle errors');
+    console.error(failResult);
+    console.log('');
+}
+
+/*
+  A function BECOMES a Promise if it resolves and/or rejects some processing
+  and has callback methods to handle good execution and errors
  */
-let alias = Promise.all([promiseChaining, promiseChaining2, promiseChaining3])
-    .then((data) => {
-        console.log(data);
-    }).catch((err) => {
-        console.log('');
-        console.log('Example 2 Promising Chaining');
-        console.log('catching first error that happens in a promise chain');
-        console.log('notice how if there is an error in the promise chain, none of the previous resolves return');
-        console.log('uncomment resolve in a prmoise, and comment out a resolve in a later promise to demonstrate');
-        console.log(err);
+function practiceFunction(conditional) {
+    console.log('The practiceFunction, function does something cool, then returns a promise object');
+
+    if (conditional > 0) {
+        return Promise.resolve('I did something really cool!');//I am "then-able and now a Promise object
+    }
+    else {
+        return Promise.reject('Oh no, an error occured.');//I am "then-able and now a Promise object
+    }
+}
+
+function callPracticeFunction(param) {
+    practiceFunction(param).then(x => res(x), x => rej(x));
+}
+
+document.getElementById('practiceFunctionGood').addEventListener('click', callPracticeFunction.bind(null, 1), false);
+document.getElementById('practiceFunctionBad').addEventListener('click', callPracticeFunction.bind(null, -1), false);
+
+/****************** END Example of using/making Promise object from a normal function  *******************/
+
+
+
+
+
+/***************** START Another example using buttons and click event handler ***********************/
+
+function aCallbackFunction(x) {
+    console.log('FROM aCallbackFunction: ' + x + '\nSome futher processing can be done with myFunction return value.');
+    console.log('FROM aCallbackFunction: ' + 'aCallbackFunction function is not a promise because it doesn\'t take a callback and resolve or reject');
+    console.log('');
+}
+
+let myFunction = function (param) {
+    console.log('A typical function (myFunction) that can do some processing.');
+
+    let x;
+
+    if (param > 0) {
+        console.log('Simple MyFunction Response button clicked');
+        console.log('If processing doesn\'t create an error, the return value can be passed and further processed by a callback function');
+        //By returning Promise.resolve, the myFunction, function becomes a Promise and can chain .then
+        x = Promise.resolve('myFunction function did not throw an error and return value can be passed and used in callback');
+    }
+    else {
+        console.log('Simple MyFunction Reject button clicked');
+        console.log('If processing does create an error, the error is passed as return value \nand can be be handled in the .catch at the end of the function chain');
+        //By returning Promise.reject, the myFunction, function becomes a Promise and can chain .then.catch
+        x = Promise.reject('Rejected from myFunction and error caught in .catch handler, bypassing callback function');
+    }
+
+    return x;
+};
+
+//Put the calling of myFunction into another function to call on demand.
+const callMyFunction = (param) => {
+    //if not wrapped in this function, the below code would execute the myFunction function.
+    //by wrapping the below code in a function, the code is executed with click event listener
+    myFunction(param).then(x => aCallbackFunction(x)).catch(x => console.error(x));
+};
+document.getElementById('callMyFunctionGood').addEventListener('click', callMyFunction.bind(null, 1), false);
+document.getElementById('callMyFunctionBad').addEventListener('click', callMyFunction.bind(null, -1), false);
+
+/***************** END Another example using buttons and click event handler ***********************/
+
+
+
+
+/****************** START Promises' and timing   ******************************/
+
+function runInSequence() {
+    let START = new Date().getTime();
+
+    function log(txt) {
+        var lapsed = new Date().getTime() - START;
+        console.log(lapsed, txt);
+    }
+
+    const promise = new Promise(function (resolve, reject) {
+        log('In Promise 1 and excuting/processing');
+        setTimeout(function onSetTimeout() {
+            log('In Promise 1 Timeout');
+            resolve('Resolved value from promise, passing value to callback');
+        }, 2000);
     });
 
+    const callback = function (val) {
+        log('Received from the first promise: ' + val);
+        return new Promise(function (resolve, reject) {
+            log('In Promise 2 and executing/processing');
+            setTimeout(function onSetTimeout() {
+                log('In callback (Promise 2)Timeout');
+                resolve('Resolved something from callback, passing value to next .then');
+            }, 1000);
+        });
+    };
+
+    promise
+        .then(callback)
+        .then(function (val) {
+            log('Received from the second promise: ' + val);
+            log('ALL Promise Done!');
+            log('The last Then is not a promise, does not return a promise object, just a regular function that terminates the function chain.');
+            log('NOTE: A .catch should be last in the chain to catch any errors......');
+        });
+}
+
+document.getElementById('runInSequence').addEventListener('click', runInSequence.bind(null, 1), false);
+
+/****************** END Promises' and timing   ******************************/
 
 
 
 
+/***** START Promise.All, Promises' running in parallel *****/ 
 
-
-/***** Example 3 Promise chaining *****/
-
-let promiseChaining4 = new Promise((resolve, reject) => {
-    resolve('resolve promiseChaining4');
-    reject('rejected promiseChaining4');
-
-});
-
-/* This can be handled by the promise chain */
-promiseChaining4.then((res) => {
-    console.log(res);
-}, (err) => {
-    console.log(err);
-});
-
-
-let promiseChaining5 = new Promise((resolve, reject) => {
-    //resolve('resolve promiseChaining5');
-    reject('rejected promiseChaining5');
-
-});
-
-/* This can be handled by the promise chain */
-promiseChaining5.then((res) => {
-    console.log(res);
-}, (err) => {
-    console.log(err);
-});
-
-
-let promiseChaining6 = new Promise((resolve, reject) => {
-    resolve('resolve promiseChaining6');
-    reject('rejected promiseChaining6');
-});
-
-/* This is handled by the promise chain */
-promiseChaining6.then((res) => {
-    console.log(res);
-}, (err) => {
-    console.log(err);
-});
-
-/* So each Promise in the cahin can return a value if written the above way
- * can be used to debug your promise chain for example
- * BUT notice the order of console.log statements in relation to the whole script execution,
- * this is something to think on
- */
-Promise.all([promiseChaining4, promiseChaining5, promiseChaining6])
-    .then((data) => {
-        console.log(data);
-    }).catch((err) => {
-        console.log('');
-        console.log('Example 3, return a previously resolved promise in a promise chain even though a later promise is rejected');
-        console.log('notice the order of console.log statements in relation to the whole script execution');
-        console.log('this is something to think on');
-        console.log('can be used to debug promise chain');
-        console.log('or even possibly return the promises that do resolve if for some reason that functionality is useful');
-        console.log('one would have to set it up as written above - see code - ');
-        console.log('and not confuse the regular type of resolved/reject promise with the returning of a completed promise chain');
-        console.log(err);
-        console.log('');
+function runParallel() {
+    
+    let promiseAll = new Promise((resolve, reject) => {
+        //NOTICE:If Resolve, acts like a return statement. Reject gets ignored.
+        resolve('Resolve Promise.all called: ');
+        reject('Rejected because of promiseAll');
     });
+
+    let promiseAll2 = new Promise((resolve, reject) => {
+        resolve(66);//comment out to see error
+        reject('Rejected because of promiseAll2');
+    });
+
+    let promiseAll3 = new Promise((resolve, reject) => {
+        resolve(45);
+        reject('Rejected because of promiseAll3');
+    });
+
+    Promise.all([promiseAll, promiseAll2, promiseAll3])
+        .then(values => {
+            console.log('');
+            console.log(values);
+            console.log(values[0]);
+            console.log(values[1]);
+            console.log(values[2]);
+            console.log('Once all promises have resolved, the values can be used to do something in .then');
+            console.log(values[0] + (values[1] + values[2]));
+            console.log('');
+        })
+        .catch((err) => {
+            console.log('');
+            console.error('Example Promise.All');
+            console.error('catching first error that happens in a promise chain');
+            console.error('notice how if there is an error in the promise chain, none of the previous resolves return');
+            console.error('uncomment resolve in promiseAll2, and comment out a reject to demonstrate');
+            console.error(err);
+            console.log('');
+        });
+}
+document.getElementById('runParallel').addEventListener('click', runParallel, false);
+
+/***** END Promise.All, Promise running in parallel *****/
+
 
 
 /* The fetch API in the browser is a practical example */
 /* notice how .json() also returns a promise */
+/*
 fetch('http://api.icndb.com/jokes/random/5')
     .then((res) => {
         res.json().then((data) => {
@@ -182,29 +240,4 @@ fetch('http://badURLtocatchError')
         console.log(err);
     });
 
-
-
-/* A couple more exmaples */
-
-const posts = [
-    { title: 'Post One', body: 'Body of post 1' },
-    { title: 'Post Two', body: 'Body of post 2' },
-    { title: 'Post Three', body: 'Body of post 3' }
-];
-
-function getPosts() {
-    setTimeout(() => {
-        const body = document.getElementsByTagName('body')[0];
-        const h3 = document.createElement('h3');
-        h3.innerHTML = 'Posts Example:';
-        body.append(h3);
-        posts.forEach((post, index) => {
-            const pTag = document.createElement('p');
-            pTag.innerHTML = `<p><span>Array Index: ${index}, </span>Post Title: ${post.title},  <span>   Post Body: ${post.body}</span></p>`;
-            body.append(pTag);
-        });
-    }, 2000);
-}
-
-getPosts();
-
+*/
