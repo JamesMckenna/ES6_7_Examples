@@ -1,2 +1,2 @@
-"# ES6_Promises" 
-<p>A simple ES 6 Promises example</p>
+"# ES6_ES7 features" 
+<p>This repository is going to be simple ES6 and ES7 examples</p>
