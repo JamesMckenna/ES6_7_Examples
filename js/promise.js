@@ -208,37 +208,23 @@ document.getElementById('runParallel').addEventListener('click', runParallel, fa
 
 /* The fetch API in the browser is a practical example */
 /* notice how .json() also returns a promise */
-/*
-fetch('http://api.icndb.com/jokes/random/5')
-    .then((res) => {
-        res.json().then((data) => {
-            console.log(data);
-            const body = document.getElementsByTagName('body')[0];
-            const h3 = document.createElement('h3');
-            h3.innerHTML = 'The Internet Chuck Norris Database Jokes:';
-            body.append(h3);
-            let jokes = data.value;
-            jokes.forEach((joke) => {
-                const pTag = document.createElement('p');
-                pTag.innerHTML = `<p><span>Joke ID: ${joke.id},</span>   Joke: ${joke.joke}</p>`;
-                body.append(pTag);
+
+function getChuckJokes() {
+    fetch('http://api.icndb.com/jokes/random/5')
+        .then((res) => {
+            res.json().then((data) => {
+                console.log('Object returned by Fetch API');
+                console.log(data);
+                const div = document.getElementById('chuck');
+                let jokes = data.value;
+                jokes.forEach((joke) => {
+                    const pTag = document.createElement('p');
+                    pTag.innerHTML = `<p><span>Joke ID: ${joke.id},</span> Joke: ${joke.joke}</p>`;
+                    div.append(pTag);
+                });
             });
+        }).catch((err) => {
+            console.log(err);
         });
-    }).catch((err) => {
-        console.log(err);
-    });
-
-
-
-
-fetch('http://badURLtocatchError')
-    .then((res) => {
-        res.json().then((data) => {
-            console.log(data);
-        });
-    }).catch((err) => {
-        console.log('Show fetch API catching error from badURL');
-        console.log(err);
-    });
-
-*/
+}
+document.getElementById('getChuckJokes').addEventListener('click', getChuckJokes, false);
