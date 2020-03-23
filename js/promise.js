@@ -1,203 +1,244 @@
-const posts = [
-    { title: 'Post One', body: 'Body of post 1' },
-    { title: 'Post Two', body: 'Body of post 2' },
-    { title: 'Post Three', body: 'Body of post 3' }
-];
+'use strict'
 
-function getPosts() {
-    const body = document.getElementsByTagName('body')[0];
-    const h3 = document.createElement('h3');
-    h3.innerHTML = 'Posts Example:';
-    body.append(h3);
+//A Promise is a way to chain functions and have then execute one after another
+//The function chain, can use the previoulsy value returned from a prior function in the chain or not.
+//The function chain should end with a .catch to handle errors, 
+//though there are other function in the Promise prototype that the chain can end with
 
-    posts.forEach((post, index) => {
-        const pTag = document.createElement('p');
-        pTag.innerHTML = `<p><span>Array Index: ${index}, </span>Post Title: ${post.title},  <span>   Post Body: ${post.body}</span></p>`;
-        body.append(pTag);
-    });
-}
+/* Basic Promise */
+let myPromise = new Promise((resolve, reject) => {
+    //Comment out resolve to catch reject 
+    resolve('resolve called myPromise');
+    reject('rejected myPromise');
+});
 
-getPosts();
-
-
-
-
-
-
-
-const createHtmlElementSync = (element, text = null, addAttribute = false, attrValue = null) => {
-
-    const newElement = document.createElement(element);
-    newElement.innerHTML = text;
-    if (addAttribute) {
-        let attr = document.createAttribute('style');
-        attr.value = attrValue;
-        newElement.setAttributeNode(attr);
-    }
-    return newElement;
-};
-
-const newPtag = createHtmlElementSync('p', `A text string literal`, true, `font-size:2rem;color:red;font-weight:bolder;`);
-document.body.appendChild(newPtag);
-
-
-
-
-
-
-
-/**
- * The Fetch API can be a complicated way to use Promises, or a simple way to use Promises.
- * A fetch request object (Interface) can be passed as a param to fetch(requestBodyObject)
- * We use the request object to supply "Credential" such as a usename and password, or api key
- * request objects can also contain the URL, cors mode, the method (GET, POST, PUT, DELETE), a request body when using a non-GET method
- * OPTIONS for request body: ArrayBuffer, ArrayBufferView, Blob/File, string, URLSearchParams, FormData
- * SEE: https://developer.mozilla.org/en-US/docs/Web/API/Request
- * 
- * For this code demonstration, I look at the Fetch API response body (Interface).
- * https://developer.mozilla.org/en-US/docs/Web/API/Response/Response
- */
-
-function logToConsole(x) {
-    if (x instanceof Error) {
-        return Promise.reject(x);
-    }
-    return Promise.resolve(console.log(x));
-}
-
-const getSomeData = (url) => {
-    //The promise isn't a value, but the value could be wrapped in the promise's response object body.
-    return fetch(url)
-
-        .then((response) => {
-            console.log('In the response.ok boolean');
-            console.log('response.type: ' + response.type);
-            console.log('response.url: ' + response.url);
-            console.log('response.useFinalURL: ' + response.useFinalURL);
-            console.log('response.ok: ' + response.ok);
-            console.log('response.status: ' + response.status);
-            console.log('response.statusText: ' + response.statusText);
-            console.log('response.headers see below, maybe an empty object if not explicitly set.');
-            console.log(response.headers);
-
-            //checking response body - if there was no error.
-            if (!response.ok) {
-                return new Error('Something went wrong, response not ok');
-            } else {
-                //can convert response body to arrayBuffer(), blob(), formData(), text();
-                //access (resolve the promise) the value in the response body and (in this example) convert it to json
-                return response.json();
-            }
-        })
-
-        .then((data) => {
-            //data should now be in a format that we can use
-            return data;
-        });
-};
-//Bad URL
-//getSomeData().then(x => logToConsole(x)).catch((error) => { console.error(error); });
-
-//Good URL
-//getSomeData('https://jsonplaceholder.typicode.com/users/1/posts').then(x => console.log(x)).catch((error) => { console.log(error);});
-
-
-
-
-
-const getSomeDataAsyn = async (url) => {
-    //The promise isn't a value, but the value could be wrapped in the promise's response object body.
-    return await fetch(url)
-    
-        .then((response) => {
-            console.log('In the response.ok boolean');
-            console.log('response.type: ' + response.type);
-            console.log('response.url: ' + response.url);
-            console.log('response.useFinalURL: ' + response.useFinalURL);
-            console.log('response.ok: ' + response.ok);
-            console.log('response.status: ' + response.status);
-            console.log('response.statusText: ' + response.statusText);
-            console.log('response.headers see below, maybe an empty object if not explicitly set.');
-            console.log(response.headers);
-
-            //checking response body - if there was no error.
-            if (!response.ok) {
-                //When catch block is inside function, this statement is not thrown, not needed....ignored
-                return new Error('Something went wrong, response not ok');
-
-            } else {
-                //can convert response body to arrayBuffer(), blob(), formData(), text();
-                //access (resolve the promise) the value in the response body and (in this example) convert it to json
-                return response.json();
-            }
-        })
-
-        .then((data) => {
-            //data should now be in a format that we can use
-            return data;
-        })
-
-        .catch((error) => {
-            //Here is where we catch the error and pass mesaage when catch block in inside containing method
-            return new Error('From catch block ' + error + '\n' + 'Notice that the error thrown from if/else in response.ok message can be caught here.');
-        });
-};
-
-//getSomeDataAsyn('https://jsonplaceholder.typicode.com/users/1/posts').then(x => logToConsole(x)).catch((error) => { console.log(error);});
-getSomeDataAsyn().then(x => logToConsole(x)).catch((error) => { console.error(error); });
-
-
-
-
-//'https://jsonplaceholder.typicode.com/users/1/posts'
-
-async function logBad() {
-    logToConsole('Call the promise providing a bad request (object) URL');
-    await getSomeDataAsyn('htt://badURL.com').then(x => logToConsole(x));
+//Execute the function chain
+myPromise.then((res) => {
+    console.log(res);
     console.log('');
-}
-//logBad();
-
-async function logGood() {
-    logToConsole('Call the promise providing a good request (object) URL');
-    let d = await getSomeDataAsyn('https://jsonplaceholder.typicode.com/users/1/posts');
+}).catch((err) => {
+    console.error(err);
     console.log('');
-    logToConsole(d);
-    console.log('breakpoint');
-}    
-//logGood();
-
-//logBad().then(logGood);
+});
 
 
 
 
+/****************** START Example of using/making Promise object from a normal function  *******************/
 
+//If function has good result this is the response callback
 function res(successResult) {
+    //This is not a Promise object, just a regular function
     console.log('The callback function after a succeful promise is run');
     console.log(successResult);
+    console.log('');
 }
-
+//If function has a bad result this is the reject callback
 function rej(failResult) {
+    //This is not a Promise object, just a regular function
     console.log('The callback to handle errors');
     console.error(failResult);
+    console.log('');
 }
 
-function practicePromise(conditional) {
-    console.log('The practicePromise function does something cool, then returns a promise');
-    //const _conditional = 1;
-    //const _conditional = -1;
-    const _conditional = conditional;
-    if (_conditional > 0) {
-        return Promise.resolve('I did something really cool!');
+/*
+  A function BECOMES a Promise if it resolves and/or rejects some processing
+  and has callback methods to handle good execution and errors
+ */
+function practiceFunction(conditional) {
+    console.log('The practiceFunction, function does something cool, then returns a promise object');
+
+    if (conditional > 0) {
+        return Promise.resolve('I did something really cool!');//I am "then-able and now a Promise object
     }
-    else { 
-        return Promise.reject('Oh no, an error occured.');
-    } 
+    else {
+        return Promise.reject('Oh no, an error occured.');//I am "then-able and now a Promise object
+    }
 }
 
-//practicePromise(1).then(x => res(x), x => rej(x));
-//practicePromise(-1).then(x => res(x), x => rej(x));
+function callPracticeFunction(param) {
+    practiceFunction(param).then(x => res(x), x => rej(x));
+}
+
+document.getElementById('practiceFunctionGood').addEventListener('click', callPracticeFunction.bind(null, 1), false);
+document.getElementById('practiceFunctionBad').addEventListener('click', callPracticeFunction.bind(null, -1), false);
+
+/****************** END Example of using/making Promise object from a normal function  *******************/
 
 
 
+
+
+/***************** START Another example using buttons and click event handler ***********************/
+
+function aCallbackFunction(x) {
+    console.log('FROM aCallbackFunction: ' + x + '\nSome futher processing can be done with myFunction return value.');
+    console.log('FROM aCallbackFunction: ' + 'aCallbackFunction function is not a promise because it doesn\'t take a callback and resolve or reject');
+    console.log('');
+}
+
+let myFunction = function (param) {
+    console.log('A typical function (myFunction) that can do some processing.');
+
+    let x;
+
+    if (param > 0) {
+        console.log('Simple MyFunction Response button clicked');
+        console.log('If processing doesn\'t create an error, the return value can be passed and further processed by a callback function');
+        //By returning Promise.resolve, the myFunction, function becomes a Promise and can chain .then
+        x = Promise.resolve('myFunction function did not throw an error and return value can be passed and used in callback');
+    }
+    else {
+        console.log('Simple MyFunction Reject button clicked');
+        console.log('If processing does create an error, the error is passed as return value \nand can be be handled in the .catch at the end of the function chain');
+        //By returning Promise.reject, the myFunction, function becomes a Promise and can chain .then.catch
+        x = Promise.reject('Rejected from myFunction and error caught in .catch handler, bypassing callback function');
+    }
+
+    return x;
+};
+
+//Put the calling of myFunction into another function to call on demand.
+const callMyFunction = (param) => {
+    //if not wrapped in this function, the below code would execute the myFunction function.
+    //by wrapping the below code in a function, the code is executed with click event listener
+    myFunction(param).then(x => aCallbackFunction(x)).catch(x => console.error(x));
+};
+document.getElementById('callMyFunctionGood').addEventListener('click', callMyFunction.bind(null, 1), false);
+document.getElementById('callMyFunctionBad').addEventListener('click', callMyFunction.bind(null, -1), false);
+
+/***************** END Another example using buttons and click event handler ***********************/
+
+
+
+
+/****************** START Promises' and timing   ******************************/
+
+function runInSequence() {
+    let START = new Date().getTime();
+
+    function log(txt) {
+        var lapsed = new Date().getTime() - START;
+        console.log(lapsed, txt);
+    }
+
+    const promise = new Promise(function (resolve, reject) {
+        console.log('');
+        log('In Promise 1 and excuting/processing');
+        setTimeout(function onSetTimeout() {
+            log('In Promise 1 Timeout');
+            resolve('Resolved value from promise, passing value to callback');
+        }, 2000);
+    });
+
+    const callback = function (val) {
+        log('Received from the first promise: ' + val);
+        return new Promise(function (resolve, reject) {
+            log('In Promise 2 and executing/processing');
+            setTimeout(function onSetTimeout() {
+                log('In callback (Promise 2)Timeout');
+                resolve('Resolved something from callback, passing value to next .then');
+            }, 1000);
+        });
+    };
+
+    promise
+        .then(callback)
+        .then(function (val) {
+            log('Received from the second promise: ' + val);
+            log('ALL Promise Done!');
+            console.log('The last Then is not a promise, does not return a promise object, just a regular function that terminates the function chain.');
+            console.log('NOTE: A .catch should be last in the chain to catch any errors......');
+        });
+}
+
+document.getElementById('runInSequence').addEventListener('click', runInSequence.bind(null, 1), false);
+
+/****************** END Promises' and timing   ******************************/
+
+
+
+
+/***** START Promise.All, Promises' running in parallel *****/ 
+
+function runParallel() {
+    
+    let promiseAll = new Promise((resolve, reject) => {
+        //NOTICE:If Resolve, acts like a return statement. Reject gets ignored.
+        resolve('Resolve Promise.all called: ');
+        reject('Rejected because of promiseAll');
+    });
+
+    let promiseAll2 = new Promise((resolve, reject) => {
+        resolve(66);//comment out to see error
+        reject('Rejected because of promiseAll2');
+    });
+
+    let promiseAll3 = new Promise((resolve, reject) => {
+        resolve(45);
+        reject('Rejected because of promiseAll3');
+    });
+
+    Promise.all([promiseAll, promiseAll2, promiseAll3])
+        .then(values => {
+            console.log('');
+            console.log(values);
+            console.log(values[0]);
+            console.log(values[1]);
+            console.log(values[2]);
+            console.log('Once all promises have resolved, the values can be used to do something in .then');
+            console.log(values[0] + ' value from promiseAll2 added to promiseAll3 = ' + (values[1] + values[2]));
+            console.log('');
+        })
+        .catch((err) => {
+            console.log('');
+            console.error('Example Promise.All');
+            console.error('catching first error that happens in a promise chain');
+            console.error('notice how if there is an error in the promise chain, none of the previous resolves return');
+            console.error('uncomment resolve in promiseAll2, and comment out a reject to demonstrate');
+            console.error(err);
+            console.log('');
+        });
+}
+document.getElementById('runParallel').addEventListener('click', runParallel, false);
+
+/***** END Promise.All, Promise running in parallel *****/
+
+
+
+/* The fetch API in the browser is a practical example */
+/* notice how .json() also returns a promise */
+/*
+fetch('http://api.icndb.com/jokes/random/5')
+    .then((res) => {
+        res.json().then((data) => {
+            console.log(data);
+            const body = document.getElementsByTagName('body')[0];
+            const h3 = document.createElement('h3');
+            h3.innerHTML = 'The Internet Chuck Norris Database Jokes:';
+            body.append(h3);
+            let jokes = data.value;
+            jokes.forEach((joke) => {
+                const pTag = document.createElement('p');
+                pTag.innerHTML = `<p><span>Joke ID: ${joke.id},</span>   Joke: ${joke.joke}</p>`;
+                body.append(pTag);
+            });
+        });
+    }).catch((err) => {
+        console.log(err);
+    });
+
+
+
+
+fetch('http://badURLtocatchError')
+    .then((res) => {
+        res.json().then((data) => {
+            console.log(data);
+        });
+    }).catch((err) => {
+        console.log('Show fetch API catching error from badURL');
+        console.log(err);
+    });
+
+*/
