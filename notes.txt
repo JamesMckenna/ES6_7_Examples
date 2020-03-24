@@ -1,0 +1,18 @@
+//Note: Converting a string to a native object is called deserialization, 
+//while converting a native object to a string so it can be transmitted across the network is called serialization.
+//parse(): Accepts a JSON string as a parameter, and returns the corresponding JavaScript object. deserialization
+//stringify(): Accepts an object as a parameter, and returns the equivalent JSON string form. serialization
+//in JSON only quoted strings may be used as properties.
+
+
+
+//let myJSON = { "name": "Chris", "age": "38" }; <---this is Json data (serialized)
+//myJSON logs => { name: "Chris", age: "38" } <---this is a javascript object (deserialized)
+//let myString = JSON.stringify(myJSON);
+//myString logs => "{"name":"Chris","age":"38"}"
+
+
+
+//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
+
+//https://medium.com/intrinsic/javascript-symbols-but-why-6b02768f4a5c - blog about JS Symbols and proxies
