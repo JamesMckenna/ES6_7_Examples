@@ -175,3 +175,41 @@
 /**/
 
 
+//let myJSON = { "name": "Chris", "age": "38" }; <---this is Json data double quotes around both key and value, if value is a number, don't use double qoutes.. JOSN can not have functions/methods. (serialized)
+
+
+//myJSON logs => { name: "Chris", age: "38" } <---this is a javascript object  double quotes around just the value, but can be around key as well. JS Objects can have functions/methods(deserialized)
+
+
+//We can json.stringify to turn JS object into valid json. As JSON, we can't do object.key to get the value it returns undefined. We need to parse back to a JS Object by doing Json.parse(object)
+
+console.log('person3 as js object');
+console.log(person3);
+console.log('person3 to access an embedded js object we use object.embedded.key');
+console.log(person3.name.first);
+console.log('person3 to access an array we use object.key[index]');
+console.log(person3.interests[1]);
+console.log('To see a method of a JS Object, use object.functionName notation. EG: person3.bio. console logs the method but doesn\'t execute');
+console.log(person3.bio);
+console.log('To call a method of a JS Object, use function call notation. EG: person3.bio(). When calling a method and printing to console, console return undefined but method still executes.');
+console.log(person3.bio());
+console.log('');
+
+console.log('What a Js object looks like when turned into json using JSON.stringify(JSObject) a.k.a serialized');
+const asJson = JSON.stringify(person3);
+console.log(asJson);
+console.log('Notice: the methods bio and greeting that were part of the JS Object person3 are not in the log statement after JSON.stringify!!!!');
+console.log('Notice: so as JSON object, we can nolonger call the method or print the method....it\'s nolonger there');
+console.log(asJson.bio);//undefined
+//console.log(asJson.bio());//TypeError: asJson.bio is not a function. unhandled error so script execution halts.
+console.log('');
+
+console.log('We can trun a JSON object back to a JS Object by using JSON.parse(object) a.k.a de-serialized');
+const backToJSObject = JSON.parse(asJson);
+console.log(backToJSObject);
+console.log('Notice: methods that were part of person3 JS object, are gone once the object is stringified (serialized) into a json object and then parsed back to a JS object (de-serialized).');
+console.log('');
+
+//let myString = JSON.stringify(myJSON);
+//myString logs => "{"name":"Chris","age":"38"}"
+
