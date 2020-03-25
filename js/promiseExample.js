@@ -1,15 +1,5 @@
 
-
-
-
-
-
-//const attsValues = [
-//    { "attr": "style", "attrValue": "font-size:2rem;color:red;font-weight:bolder;" },
-//    { "attr": "data-dash", "attrValue": "test" },
-//    { "attr": "class", "attrValue": "main-container float-left box-shadow" }
-//];
-const attsValues = [
+export const attsValues = [
     { attr: "style", attrValue: "font-size:2rem;color:red;font-weight:bolder;" },
     { attr: "data-dash", attrValue: "test" },
     { attr: "class", attrValue: "main-container float-left box-shadow" }
@@ -24,7 +14,7 @@ const attsValues = [
  * @return - a new html element
  */
 
-const createHtmlElement = (element, text = null, addAttribute = false, attributesValues) => {
+export const createHtmlElement = (element, text = null, addAttribute = false, attributesValues) => {
 
     const newElement = document.createElement(element);
     newElement.innerHTML = text;
@@ -40,8 +30,8 @@ const createHtmlElement = (element, text = null, addAttribute = false, attribute
     return newElement;
 };
 
-const newPtag = createHtmlElement('p', `A text string literal`, true, attsValues);
-document.body.appendChild(newPtag);
+//const newPtag = createHtmlElement('p', `A text string literal`, true, attsValues);
+//document.body.appendChild(newPtag);
 
 
 
