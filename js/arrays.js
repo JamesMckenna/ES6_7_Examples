@@ -48,7 +48,7 @@ getJSONDataAsyn(request)
         console.log(x);
         console.log('');
 
-        console.log('First, copy x so we don\'t lose data and x can be used again later in code. Recall JS arrays are refernece values.');
+        console.log('First, copy x so we don\'t lose data and x can be used again later in code. Recall JS arrays are reference values.');
         console.log('A simple way to clone an array is to use ES6 destructuring and the spread operator "..." EG: let xCopy = [...x];');
         let xCopy = [...x];
         let xPopped = xCopy.pop();
@@ -85,23 +85,22 @@ getJSONDataAsyn(request)
         console.log('');
 
         console.log('What does array.join do?');
-        let joined = unShifted.join('////');
+        let joined = unShifted.join();
         console.log(joined);
-        console.log('In the case of an array of JS Objects, the join doesn\'t return what we need....let\'s try using it a different way and stringify the objects first.');
+        console.log('In the case of an array of JS Objects, the join doesn\'t return what we need....let\'s try using it a different way and stringify the objects first, then join them.');
         for (let i = 0; i < unShifted.length; i++) {
             unShifted[i] = JSON.stringify(unShifted[i]);
         }
-        console.log(unShifted.join('\n---------------------------------------'));
+        console.log(unShifted.join('------------------NO LONGER AN ARRAY [SOMETHING, SOMETHING , SOMETHING]-------BUT ONE LONG STRING----SEPERATED BY DELIMITER PASSED AS AN ARG---------'));
         console.log('Now there\'s an almost useless wall of text, though it does show what array.join(delimeter) can do. ');
         console.log('');
 
         console.log('With array.sort(function), we can do some cool stuff. HINT: Take a look at username.');
         let sortting = [...x];
-        sortting.sort((a, b) =>
-        {
+        sortting.sort((a, b) => {
             let userNameA = a.username.toUpperCase();
             let userNameB = b.username.toUpperCase();
-            if(userNameA < userNameB){
+            if (userNameA < userNameB) {
                 return -1;
             }
             if (userNameA > userNameB) {
@@ -115,38 +114,10 @@ getJSONDataAsyn(request)
         console.log('For a list of all the properties and methods of a JS array, \nSee: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array');
 
         console.log('');
-        console.log('Return x to the next .then in the callback chain where I look at the JS Map collection.');
-        return x; //return to allow next .then callback to use, passing vlaue down the line
+        //console.log('Return x to the next .then in the callback chain where I look at the JS Map collection.');
+        //return x; //return to allow next .then callback to use, passing vlaue down the line
     })
-    .then((x) => {
-        console.log('');
-        console.log('IN SECOND .THEN, LOOKING AT JS MAP COLLECTION');
-        //x is an array of JSON objects. lets put users into a Map collection and use User.Id as the maps key and the User as a value
-        console.log('In the second .then callback, take the value of x and put into a Map collection');
-        let usersMap = new Map();
-        console.log('Lets put each user into a Map collection and use the User.Id as the key to retrieve the users info');
-        for (let userIsJSObject of x) {
-            usersMap.set(userIsJSObject.id, userIsJSObject);
-            //console.log(userIsJSObject);
-        }
-        console.log('Accessing userMap by key where the key is the user id we used when creating and filling the map. EG: usersMap.get(2)');
-        console.log(usersMap.get(2));
-        console.log('');
-
-        //console.log('So lets JSON.stringify it');
-        //for (let user of x) {
-        //    so lets JSON.stringify it
-        //    usersMap.set(user.id, user);
-        //    console.log(user);
-        //}
-        //console.log('');
-
-        console.log('Turn each user JS Object into a user JSON data');
-        console.log(JSON.stringify(usersMap.get[1]));
-
-        //for (let [key, value] of usersMap.entries()) {
-        //    console.log(key + ' = ' + JSON.stringify(value));
-        //}
-        console.log('');
+    .catch((error) => {
+        return new Error('Error: ' + error);
     });
 console.log('');
