@@ -115,7 +115,7 @@ getJSONDataAsyn(request)
 
         console.log('');
         //console.log('Return x to the next .then in the callback chain where I look at the JS Map collection.');
-        //return x; //return to allow next .then callback to use, passing vlaue down the line
+        //return x; //return to allow next .then callback to use, passing value down the line
     })
     .catch((error) => {
         return new Error('Error: ' + error);
