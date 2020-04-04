@@ -12,7 +12,13 @@
 
     <h2>Exploring JS Proxies and Prototype</h2>
     <p>See the Dev Tools Console</p>
+    <div class="note">
+        <h3>FROM MDN</h3><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain</a>
+        <p>Following the ECMAScript standard, the notation <code>someObject.[[Prototype]]</code> is used to designate the prototype of <code>someObject</code>. Since ECMAScript 2015, the <code>[[Prototype]]</code> is accessed using the accessors <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getPrototypeOf"><code>Object.getPrototypeOf()</code></a> and <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/setPrototypeOf"><code>Object.setPrototypeOf()</code></a>. This is equivalent to the JavaScript property <code>__proto__</code> which is non-standard but de-facto implemented by many browsers.</p>
 
-    <script type="module" src="js/UserModel/name.js"></script>
+        <p>It should not be confused with the <code><em>func</em>.prototype</code> property of functions, which instead specifies the <code>[[Prototype]]</code> to be assigned to all <em>instances</em> of objects created by the given function when used as a constructor. The <code><strong>Object.prototype</strong></code> property represents the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object"><code>Object</code></a> prototype object.</p>
+    </div>
+    <script type="module" src="js/UserModel/main.js"></script>
+    
 </body>
 </html>

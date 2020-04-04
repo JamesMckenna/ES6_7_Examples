@@ -1,9 +1,11 @@
 'use strict'
 //validator using prototype inheritance, ES6 Module Export and Template Literal 
 
-export const validator = function () {};
-validator.prototype.validate = function (value, property) {
-    const self = this, rules = property.validator;
+export const validator = function () { };
+
+validator.prototype.validate = function (property, value) {
+    const self = this;
+    const rules = property.validator;
     const len = property.strLength;
     const keyRegExp = new RegExp(property.regex);
     const errMsg = property.errMsg;
@@ -12,6 +14,7 @@ validator.prototype.validate = function (value, property) {
         return self[rule](value, errMsg, keyRegExp, len);
     });
 };
+
 validator.prototype.isString = function (value, errMsg, keyRegExp) {
     const testInput = keyRegExp.test(value);
     if (testInput) {
@@ -28,7 +31,8 @@ validator.prototype.strLength = function (value, errMsg, keyRegExp, strLng) {
     throw new TypeError(`${errMsg} must be between ${strLng[0]} and ${strLng[1]} letters in length.`);
 };
 validator.prototype.isNotEmpty = function (value, errMsg) {
-    if (value !== '' && value !== null && typeof value !== 'undefined') {
+    //if (value !== '' && value !== null && typeof value !== 'undefined') {
+    if (value !== '' && value !== null) {
         return true;
     }
     throw new TypeError(`${errMsg} must have a value.`);
