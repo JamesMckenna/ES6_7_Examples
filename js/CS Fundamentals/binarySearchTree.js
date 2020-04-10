@@ -53,7 +53,7 @@ bsTree.prototype.has = function (value) {
     return found;
 };
 
-bsTree.prototype.delete = function (value) {
+bsTree.prototype.delete = function (value, balance = false) {
     if (this.root === null) {
         return;
     }
@@ -76,18 +76,27 @@ bsTree.prototype.delete = function (value) {
     }
     const nodeToRemove = current;
     let replacement = null;
+    //if found has a left child node and a right child node
     if (nodeToRemove.left !== null && nodeToRemove.right !== null) {
+
+        //make current.left the replacement node
         replacement = nodeToRemove.left;
+
+        //make current replacementParent
         let replacementParent = nodeToRemove;
+
+        //if current has a right child node
         while (replacement.right !== null) {
             replacementParent = replacement;
             replacement = replacement.right;
         }
+
         replacement.right = nodeToRemove.right;
         if (replacementParent !== nodeToRemove) {
             replacementParent.right = replacement.left;
             replacement.left = nodeToRemove.left;
         }
+
     } else if (nodeToRemove.left !== null) {
         replacement = nodeToRemove.left;
     } else if (nodeToRemove.right !== null) {
@@ -103,7 +112,11 @@ bsTree.prototype.delete = function (value) {
             parent.right = replacement;
         }
     }
-    this.balance();
+
+    if (balance) {
+        this.balance();
+    }
+
     return value + ' was deleted form the tree.';
 };
 
@@ -131,11 +144,11 @@ bsTree.prototype.count = function () {
     return count;
 };
 
-bsTree.prototype[Symbol.iterator] = function () {
-    return this.values;
-};
+//bsTree.prototype[Symbol.iterator] = function () {
+//        return this.values;
+//};
 
-bsTree.prototype.values = function () {
+bsTree.prototype.values = function* () {
     /*
     * Traversal is easiest when using a recursive function, so define
     * a helper function here. This function does an in-order traversal
@@ -158,8 +171,7 @@ bsTree.prototype.values = function () {
             }
         }
     }
-    //yield* traverse(this.root);
-    return traverse(this.root);
+    yield* traverse(this.root);
 };
 
 //a little playing around on my part. 
@@ -200,6 +212,54 @@ bsTree.prototype.balance = function () {
     return false;
 };
 
+bsTree.prototype.poTraversal = function* () {
+    function* traversal(node) {
+        if (node !== null) {
+            if (node.left !== null) {
+                yield* traversal(node.left);
+            }
+            if (node.right !== null) {
+                yield* traversal(node.right);
+            }
+
+            yield node.value;
+        }
+    }
+    yield* traversal(this.root);
+};
+
+bsTree.prototype.prTraversal = function* (node) {
+    //A typical recursive algorithm if NOT used in a JS generator
+    //if (node !== null) {
+    //    console.log(node.value);
+    //    if (node.left !== null) {
+    //        this.prTraversal(node.left);
+    //    }
+    //    if (node.right !== null) {
+    //        this.prTraversal(node.right);
+    //    }
+    //}
+
+    //A recursive algorithm using a JS generator
+    function* traversal(node) {
+        if (node !== null) {
+            yield node.value;
+            if (node.left !== null) {
+                yield* traversal(node.left);
+            }
+            if (node.right !== null) {
+                yield* traversal(node.right);
+            }           
+        }
+    }
+    yield * traversal(this.root);
+};
+
+
+
+
+
+
 
 let tree1 = new bsTree();
 const practiceValues = [3, 15, 4, 99, 34, 65, 1, 12, 66, 14, 45, 32, 89, 77, 20, 25, 30, 5, 10, 63, 0, 56, 22, 38, 94, 48, 57, 69];
@@ -229,7 +289,7 @@ console.log('Attempting to delete a value the tree1 does not contain 1001. ' + t
 console.log('');
 
 
-const strArray = ['Sam', 'Georgia', 'Frank', 'Karen', 'Bob', 'Lisa', 'Joe', 'Greg', 'Alice', 'Carl', 'Victor', 'Jamie', 'Scott', 'Sandra', 'Shannon', 'Ben', 'David', 'Zoe'];
+const strArray = ['Sam', 'Georgia', 'Frank', 'Karen', 'Betty', 'Susan', 'Carol', 'Jasper', 'Violet', 'Samantha', 'Troy', 'Sandy', 'Bob', 'Lisa', 'Joe', 'Greg', 'Alice', 'Carl', 'Victor', 'Jamie', 'Scott', 'Sandra', 'Shannon', 'Ben', 'Angela', 'Toby', 'Denis', 'David', 'Zoe'];
 console.log('Will this example work with an array of strings?\n[' + [...strArray] + ']');
 const tRoot = Math.round(strArray.length / 2);
 const strTree = new bsTree();
@@ -240,16 +300,19 @@ for (let str in strArray) {
     }
 }
 console.log('The root is ' + strTree.root.value);
-console.log('The tree values are');
-console.log('The tree node values are: ' + [...strTree.values()]);
+console.log('Post Order Trasversal values are: ' + [...strTree.poTraversal()]);
+console.log(' ');
+console.log('Pre Order Trasversal values are: ' + [...strTree.prTraversal()]);
+console.log(' ');
+console.log('The In Order Trasversal values are: ' + [...strTree.values()]);
 console.log('The tree node count is: ' + strTree.count());
-console.log('Taking a look at the root and what index it has in the printed list, it can be seen that the tree limbs aren\'t balanced.\nLet\'s balance the tree.');
-strTree.balance();
-console.log('The new root is ' + strTree.root.value);
-console.log('The tree values are');
-console.log('The tree node values are: ' + [...strTree.values()]);
-console.log('The tree node count is: ' + strTree.count());
-console.log('');
+//console.log('Taking a look at the root and what index it has in the printed list, it can be seen that the tree limbs aren\'t balanced.\nLet\'s balance the tree.');
+//strTree.balance();
+//console.log('The new root is ' + strTree.root.value);
+//console.log('The tree values are');
+//console.log('The tree node values are: ' + [...strTree.values()]);
+//console.log('The tree node count is: ' + strTree.count());
+//console.log('');
 
 
 console.log('But if I sort the array first, I get a different value for the root');
@@ -273,3 +336,9 @@ newStrTree.delete('Joe');
 console.log('After removing Joe from the tree.\n' + [...newStrTree.values()]);
 console.log('And the new tree root is ' + newStrTree.root.value);
 console.log('Node count is: ' + newStrTree.count());
+console.log(' ');
+console.log(' ');
+newStrTree.poTraversal(newStrTree.root);
+console.log(' ');
+console.log(' ');
+newStrTree.prTraversal(newStrTree.root);
